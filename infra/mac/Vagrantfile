@@ -1,0 +1,45 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "wesdemos/ubuntu2404-arm"
+  config.vm.box_check_update = false
+
+  # define rke2 nodes
+  (1..2).each do |number|
+    name = "r#{number}mac"
+
+    config.vm.define name do |node|
+      node.vm.network 'public_network', ip: "192.168.6.10#{number}", netmask: "21"
+      node.vm.network 'forwarded_port', id: 'ssh', host: "810#{number}", guest: "22"
+      node.vm.hostname = name
+    end
+  end
+  
+  # define k3s nodes
+  (1..2).each do |number|
+    name = "k#{number}mac"
+
+    config.vm.define name do |node|
+      node.vm.network 'public_network', ip: "192.168.6.11#{number}", netmask: "21"
+      node.vm.network 'forwarded_port', id: 'ssh', host: "811#{number}", guest: "22"
+      node.vm.hostname = name
+    end
+  end
+
+  config.vm.provider 'parallels' do |vb|
+    # nest inside loops above for targeting specific nodes
+    vb.memory = '8192'
+    vb.cpus = 4
+  end
+ 
+  config.vm.provision 'shell', name: 'early', inline:<<EOF
+# expand LV/FS to include what's already available in the PV/VG (but not allocated initially)
+# sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
+# sudo resize2fs /dev/ubuntu-vg/ubuntu-lv
+EOF
+
+  config.vm.provision 'shell', path: "./bootstrap/dotfiles.fish", privileged: false
+
+end
+
