@@ -1,0 +1,24 @@
+# https://www.rancher.com/quick-start
+# docker run --privileged -d --restart=unless-stopped -p 80:80 -p 443:443 --name rancher rancher/rancher
+#
+# also:
+# https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/other-installation-methods/rancher-on-a-single-node-with-docker
+#
+services:
+  rancher:
+    image: rancher/rancher
+    # restart: unless-stopped
+    privileged: true
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      # can use mkcert or similar to generate certs ahead of time
+      # - certs/FULL_CHAIN.pem:/etc/rancher/ssl/cert.pem
+      # - certs/PRIVATE_KEY.pem:/etc/rancher/ssl/key.pem
+      # - certs/CA_CERTS.pem:/etc/rancher/ssl/cacerts.pem
+      - rancher:/var/lib/rancher
+      #   - kubelet:/var/lib/kubelet
+
+volumes:
+  rancher:
