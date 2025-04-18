@@ -41,6 +41,6 @@ sudo apt install --yes linux-generic-hwe-24.04
 
 EOF
 
-  config.vm.provision 'shell', path: "../../vagrant-node/bootstrap/dotfiles.fish", privileged: false
+  config.vm.provision 'shell', path: "../mac/bootstrap/dotfiles.fish", privileged: false
 end
 
