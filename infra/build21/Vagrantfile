@@ -23,7 +23,7 @@ Vagrant.configure("2") do |config|
     vb.cpus = 4
   end
 
-  # default router
+  # set default route to use lab network and not NAT'd vbox NIC
   config.vm.provision "shell",
     run: "always",
     inline: "
